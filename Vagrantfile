@@ -16,7 +16,7 @@
 
 require 'ipaddr'
 
-DEFAULT_BOX = "swift-all-in-one"
+DEFAULT_BOX = "swift-encrypt"
 
 vagrant_boxes = {
   DEFAULT_BOX => "https://atlas.hashicorp.com/ubuntu/boxes/trusty64/versions/14.04/providers/virtualbox.box",
@@ -25,7 +25,7 @@ vagrant_boxes = {
 }
 vagrant_box = (ENV['VAGRANT_BOX'] || DEFAULT_BOX)
 
-base_ip = IPAddr.new(ENV['IP'] || "192.168.8.80")
+base_ip = IPAddr.new(ENV['IP'] || "192.168.8.90")
 hosts = {
   'default' => base_ip.to_s
 }
@@ -51,7 +51,7 @@ local_config = {
   "zones" => Integer(ENV['ZONES'] || 4),
   "nodes" => Integer(ENV['NODES'] || 4),
   "disks" => Integer(ENV['DISKS'] || 4),
-  "swift_repo" => (ENV['SWIFT_REPO'] || 'git://github.com/openstack/swift.git'),
+  "swift_repo" => (ENV['SWIFT_REPO'] || 'https://github.com/Mirantis/swift-encrypt.git'),
   "swift_repo_branch" => (ENV['SWIFT_REPO_BRANCH'] || 'master'),
   "swiftclient_repo" => (ENV['SWIFTCLIENT_REPO'] || 'git://github.com/openstack/python-swiftclient.git'),
   "swiftclient_repo_branch" => (ENV['SWIFTCLIENT_REPO_BRANCH'] || 'master'),
@@ -68,7 +68,7 @@ Vagrant.configure("2") do |global_config|
     global_config.vm.define vm_name do |config|
       hostname = vm_name
       if hostname == 'default' then
-        hostname = 'saio'
+        hostname = 'swift-encrypt'
       end
       config.vm.hostname = hostname
       config.vm.box = vagrant_box
@@ -77,7 +77,7 @@ Vagrant.configure("2") do |global_config|
       end
       config.vm.network :private_network, ip: ip
       config.vm.provider :virtualbox do |vb|
-        vb.name = "vagrant-#{hostname}-#{current_datetime}"
+        vb.name = "vagrant-encrypt-#{current_datetime}"
         vb.memory = 768
       end
       config.vm.provision :chef_solo do |chef|
